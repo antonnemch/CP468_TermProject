@@ -1,0 +1,17 @@
+# .gitignore
+# Purpose: Ignore caches and artifacts.
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.dist/
+.build/
+.ipynb_checkpoints/
+.env
+.venv
+.envrc
+.DS_Store
+logs/
+benchmarks/*.csv

@@ -1,0 +1,8 @@
+"""
+nqueens.__init__
+Purpose: Define the public API of the package.
+
+Exports:
+- solve_minconflicts(...): High-performance Min-Conflicts solver (Numba-backed).
+- solve_backtracking(...): Complete CSP solver baseline for small/medium n.
+"""

@@ -39,17 +39,17 @@ nqueens-minconflicts/
 ├─ requirements.txt                  # Pip dependencies for venv
 ├─ .gitignore                        # Git ignores for Python/cache/artifacts
 ├─ src/
-│  ├─ nqueens/
-│  │  ├─ __init__.py                 # Public API exports
-│  │  ├─ cli.py                      # CLI entrypoints for both solvers
-│  │  ├─ config.py                   # Default hyperparameters & flags
-│  │  ├─ validation.py               # Solution/counter validation utilities
-│  │  ├─ instrumentation.py          # Timing/metrics helpers
-│  │  ├─ common_arrays.py            # Typed array allocation & initialization
-│  │  ├─ solver_backtracking.py      # Complete CSP solver (MRV/LCV/FC)
-│  │  ├─ solver_minconflicts.py      # Numba-compiled Min-Conflicts kernel
-│  │  ├─ heuristics.py               # Backtracking heuristics implementations
-│  │  └─ sampling.py                 # JIT-safe row sampling utilities
+│  └─ nqueens/
+│     ├─ __init__.py                 # Public API exports
+│     ├─ cli.py                      # CLI entrypoints for both solvers
+│     ├─ config.py                   # Default hyperparameters & flags
+│     ├─ validation.py               # Solution/counter validation utilities
+│     ├─ instrumentation.py          # Timing/metrics helpers
+│     ├─ common_arrays.py            # Typed array allocation & initialization
+│     ├─ solver_backtracking.py      # Complete CSP solver (MRV/LCV/FC)
+│     ├─ solver_minconflicts.py      # Numba-compiled Min-Conflicts kernel
+│     ├─ heuristics.py               # Backtracking heuristics implementations
+│     └─ sampling.py                 # JIT-safe row sampling utilities
 ├─ benchmarks/
 |  ├─ results/                       # Folder for csv benchmark results
 │  ├─ bench_minconflicts.py          # Sweeps & timing for Min-Conflicts

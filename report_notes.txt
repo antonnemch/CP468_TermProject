@@ -1,0 +1,21 @@
+# Anton - These are things i think we should cover in our report/presentation/know so that we can answer questions:
+
+- Minconflicts algorithm:
+    - Why is it fast? (O(1) steps vs O(n))
+    - How are ties broken
+    - how are candidate rows chosen (k sampling vs local)
+
+- How do we know it is solved!!!
+
+- How did we optimize our code to make it run this quickly:
+    - Why python is slow:
+    - Numba: Just in Time compiler using LLVM
+    - on first execution of numba decorated function it infers types and compiles into machine code using LLVM
+    - What is LLVM? 
+    - which parts of our code we accelerated:
+        - The inner Min-Conflicts loop:
+            - picking columns,
+            - computing conflict scores,
+            - moving queens and updating counters,
+            - simple RNG for tie-breaking.
+We treat Python as the orchestrator, Numba as the engine.

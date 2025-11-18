@@ -4,6 +4,7 @@
     - Why is it fast? (O(1) steps vs O(n))
     - How are ties broken
     - how are candidate rows chosen (k sampling vs local)
+    - in what data structures are things stored?
 
 - How do we know it is solved!!!
 
@@ -19,3 +20,6 @@
             - moving queens and updating counters,
             - simple RNG for tie-breaking.
 We treat Python as the orchestrator, Numba as the engine.
+
+
+Biggest N we can solve for: 

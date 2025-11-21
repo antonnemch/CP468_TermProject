@@ -23,3 +23,5 @@ We treat Python as the orchestrator, Numba as the engine.
 
 
 Biggest N we can solve for: 
+
+How do we generate random numbers for sampling k candidate rows?

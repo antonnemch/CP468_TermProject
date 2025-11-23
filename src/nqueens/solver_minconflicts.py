@@ -253,8 +253,8 @@ def _minconflicts_kernel(
 def solve_minconflicts(
    n: int,
    seed: int = 42,
-   max_steps: int = 300000,
-   k_sample: int = 64,
+   max_steps: int = 100000000,
+   k_sample: int = 512,
    restart_limit: int = 10,
    nbhd_width: int = 0,
    structured_init: bool = True,
@@ -340,13 +340,13 @@ def solve_minconflicts(
 
 if __name__ == "__main__":
    # Quick sanity check for small/medium n
-   for n_test in (8, 20, 50, 100, 10000, 1000000):
+   for n_test in (8, 20, 50, 100, 10000, 100000, 1000000):
       print(f"\nSolving n={n_test} with Min-Conflicts.")
       pos, stats = solve_minconflicts(
          n_test,
          seed=123,
-         max_steps=10000000,
-         k_sample=128,       # use k-sampling; set to 0 for full-domain
+         max_steps=100000000,
+         k_sample=512,       # use k-sampling; set to 0 for full-domain
          restart_limit=5,
          nbhd_width=0,
          structured_init=True,

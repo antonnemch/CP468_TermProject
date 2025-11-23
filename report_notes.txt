@@ -5,6 +5,7 @@
     - How are ties broken
     - how are candidate rows chosen (k sampling vs local)
     - in what data structures are things stored?
+    - runtime analysis
 
 - How do we know it is solved!!!
 

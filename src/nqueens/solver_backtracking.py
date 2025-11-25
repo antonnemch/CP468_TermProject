@@ -27,3 +27,15 @@ from .heuristics import (
     lcv_order_values,
     forward_check,
 )
+
+def constraints(v1, r1, v2, r2):
+    """True if (v1=r1) and (v2=r2) is legal and false otherwise"""
+  
+    if r1 is None or r2 is None:
+        return True
+    if r1 == r2:
+        return False
+    if abs(r1-r2) == abs(v1-v2):
+        return False
+      
+    return True

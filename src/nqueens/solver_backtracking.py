@@ -18,3 +18,12 @@ Implementation notes:
 - Iterative DFS optional to avoid recursion depth issues.
 - Target: correctness/insight for small/medium n (not for million-scale).
 """
+
+import time
+import numpy as np
+from .heuristics import (
+    mrv_select_var,
+    degree_tiebreak,
+    lcv_order_values,
+    forward_check,
+)

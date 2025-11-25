@@ -10,20 +10,24 @@ Functions:
 """
 
 def mrv_select_var(domains):
-    """Return index of the unassigned variable with the smallest domain"""
+    """Return the index of the variable with the smallest non-empty domain."""
     best = None
-    best_size =float('inf')
+    best_size = float('inf')
 
     for i, dom in enumerate(domains):
-        size = len(dom) 
-        if size > 1 and size < best_size:
+        size = len(dom)
+
+        # no valid moves left
+        if size == 0:
+            return None
+        if size < best_size:
             best = i
             best_size = size
 
-  
     return best
 
-def degree_tiebreak(vars_, constraints):
+
+def degree_tiebreak(varss, constraints):
     """
     For tied MRV vars pick the one with highest degree (most constraints).
     """

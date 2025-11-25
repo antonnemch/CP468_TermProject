@@ -455,7 +455,7 @@ if __name__ == "__main__":
         "structured_init_values": [0, 1],                 # 0=False, 1=True
         "seeds": [42, 123, 67],                           # each seed = its own config
         "max_restart": 3,
-        "max_step_ratio": 500.0,                           # max_steps = ratio * n
+        "max_step_ratio": 8,                           # max_steps = ratio * n
         "timeout_per_config_sec": 15.0 * 60.0,            # wall-time budget per config (used for diagnostics)
         "output_csv": "benchmarks/results/minconflicts_grid_improved.csv",
     }

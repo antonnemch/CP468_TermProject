@@ -39,3 +39,11 @@ def constraints(v1, r1, v2, r2):
         return False
       
     return True
+
+def solve_backtracking(n, time_limit=None):
+    """Return solution to N-queens as array or None if not solveable"""
+  
+    start = time.time()
+    # Setup domains and assignments for each n
+    domains = [set(range(n)) for _ in range(n)]
+    assignment = [None]*n

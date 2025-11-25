@@ -52,3 +52,12 @@ def solve_backtracking(n, time_limit = None):
     def undo_pruned(pruned):
         for var, vals in pruned: 
             domains[var].update(vals)
+
+    def backtrack():
+
+        return False
+
+    if backtrack():
+      # Explicitly convert to int type
+      return np.array(assignment,dtype=int)
+    return None

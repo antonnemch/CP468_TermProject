@@ -46,7 +46,7 @@ def solve_backtracking(n, time_limit = None):
     start = time.time()
     # Setup domains and assignments for each n
     domains = [set(range(n)) for _ in range(n)]
-    assignment = [None]*n
+    assignment = [None]*n 
 
   # helper func to undo values in a specific variables domain that were previously pruned
     def undo_pruned(pruned): 

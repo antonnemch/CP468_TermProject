@@ -53,7 +53,7 @@ def solve_backtracking(n, time_limit = None):
         for var, vals in pruned: 
             domains[var].update(vals)
           
-    # core algorithm
+    # core backtracking algorithm
     def backtrack():
       
       if time_limit and time.time() - start > time_limit:
@@ -69,6 +69,25 @@ def solve_backtracking(n, time_limit = None):
             for i, dom in enumerate(domains):
                 assignment[i] =  next(iter(dom))
             return True
+
+        # Get all vars tied for smallest domain size
+        min_size = float('inf')
+        for dom in domains:
+          size = len(dom)
+          if size < min_size:
+            min_size = size
+
+        ties = []
+        for i,d in enumerate(domains):
+          if len(d) == min_size:
+            ties.append(i)
+           
+        if len(ties) > 1:
+            var = degree_tiebreak(ties, constraints)
+
+
+
+        
 
         return False
 

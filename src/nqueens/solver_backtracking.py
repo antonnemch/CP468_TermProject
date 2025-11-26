@@ -49,7 +49,7 @@ def solve_backtracking(n, time_limit = None):
     assignment = [None]*n
 
   # helper func to undo values in a specific variables domain that were previously pruned
-    def undo_pruned(pruned):
+    def undo_pruned(pruned): 
         for var, vals in pruned: 
             domains[var].update(vals)
           
@@ -66,9 +66,9 @@ def solve_backtracking(n, time_limit = None):
         # if all variables are assigned --> solved
         if all(len(dom) == 1 for dom in domains):
           
-            for i, dom in enumerate(domains):
-                assignment[i] =  next(iter(dom))
-            return True
+          for i, dom in enumerate(domains):
+              assignment[i] =  next(iter(dom))
+          return True
 
         # Get all vars tied for smallest domain size
         min_size = float('inf')

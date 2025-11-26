@@ -85,13 +85,32 @@ def solve_backtracking(n, time_limit = None):
         if len(ties) > 1:
             var = degree_tiebreak(ties, constraints)
 
+        for value in lcv_order_values(var, domains, constraints):
+          
+          removed = []
+          for x in domains[var]:
+            if x != value:
+              removed.append(x)
 
+          domains[var] = {value}
 
-        
+          # forward checking
+          pruned = forward_check(var, value, domains, constraints)
+          if pruned is not None:
+            # check if solved
+            if backtrack():
+              return True
+              
+            # if not solved undo
+            undo_pruned(pruned)
 
+          # undo any previous domain changes as well
+          domains[var].update(removed)
+          
         return False
 
     if backtrack():
       # Explicitly convert to int type
       return np.array(assignment,dtype=int)
+      
     return None

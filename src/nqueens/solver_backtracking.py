@@ -32,11 +32,11 @@ def constraints(v1, r1, v2, r2):
     """True if (v1=r1) and (v2=r2) is legal and false otherwise"""
   
     if r1 is None or r2 is None:
-        return True
+      return True
     if r1 == r2:
-        return False
+      return False
     if abs(r1-r2) == abs(v1-v2):
-        return False
+      return False
       
     return True
 
@@ -52,8 +52,23 @@ def solve_backtracking(n, time_limit = None):
     def undo_pruned(pruned):
         for var, vals in pruned: 
             domains[var].update(vals)
-
+          
+    # core algorithm
     def backtrack():
+      
+      if time_limit and time.time() - start > time_limit:
+        return False
+
+      var = mrv_select_var(domains)
+      if var is None:
+        return False
+
+        # if all variables are assigned --> solved
+        if all(len(dom) == 1 for dom in domains):
+          
+            for i, dom in enumerate(domains):
+                assignment[i] =  next(iter(dom))
+            return True
 
         return False
 

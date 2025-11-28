@@ -68,8 +68,11 @@ def solve_backtracking(n, time_limit=None):
             
             # Assign
             assignment[var] = value
-            old_domain = domains[var]
+            old_domain = domains[var].copy()
             domains[var] = {value}
+            
+            # Save ALL domain states before forward check
+            saved_domains = [d.copy() for d in domains]
             
             # Forward check
             pruned = forward_check(var, value, domains, constraints)
@@ -77,14 +80,13 @@ def solve_backtracking(n, time_limit=None):
             if pruned is not None:
                 if backtrack(depth + 1):
                     return True
-                
-                # Undo forward checking
-                for other_var, removed_vals in pruned:
-                    domains[other_var].update(removed_vals)
+            
+            # Restore ALL domains (whether pruned was None or not)
+            for i in range(len(domains)):
+                domains[i] = saved_domains[i]
             
             # Undo assignment
             assignment[var] = None
-            domains[var] = old_domain
         
         return False
     

@@ -49,22 +49,21 @@ def degree_tiebreak(varss, constraints):
 
 def lcv_order_values(var, domains, constraints):
     """
-    Order var's domain values by how few values they eliminate from neighbors
+    Order var's domain values by how many values they eliminate from neighbors.
     """
-    pairs = []  # (val, values eliminated)
-
+    pairs = []  # (val, count of values eliminated)
     for value in domains[var]:
         count = 0
-        for other_var, other_dom in enumerate(domains):
-            if other_var== var:
+        for other_var in range(len(domains)):
+            if other_var == var:
                 continue
-            for v2 in other_dom:
+            for v2 in list(domains[other_var]):  # iterate over copy
                 if not constraints(var, value, other_var, v2):
                     count += 1
         pairs.append((value, count))
-    # Sort by values eliminated
+    
+    # Sort by fewest eliminations (least constraining first)
     pairs.sort(key=lambda p: p[1])
-  
     return [val for val, _ in pairs]
 
 

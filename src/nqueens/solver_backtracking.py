@@ -72,7 +72,7 @@ def solve_backtracking(n, time_limit=None):
         var_domain_size = len(domains[var])
         ties = []
         for i, d in enumerate(domains):
-            if len(d) == var_domain_size:
+            if len(d) == var_domain_size:   # FIX: compare to global MRV var size
                 ties.append(i)
 
         if len(ties) > 1:

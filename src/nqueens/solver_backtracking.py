@@ -43,67 +43,54 @@ def solve_backtracking(n, time_limit=None):
     start = time.time()
     domains = [set(range(n)) for _ in range(n)]
     assignment = [None] * n
-
-    def undo_pruned(pruned):
-        for var, vals in pruned:
-            domains[var].update(vals)
-
-    def backtrack():
+    
+    def backtrack(depth):
         if time_limit and time.time() - start > time_limit:
             return False
-
-        # Check if solved (every domain size == 1)
-        solved = True
-        for dom in domains:
-            if len(dom) != 1:
-                solved = False
-                break
-        if solved:
-            for i, dom in enumerate(domains):
-                assignment[i] = next(iter(dom))
+        
+        # Check if already complete
+        if depth == n:
             return True
-
-        # MRV
-        var = mrv_select_var(domains)
-        if var is None:
+        
+        var = None
+        min_size = float('inf')
+        for i in range(n):
+            if assignment[i] is None and len(domains[i]) < min_size:
+                min_size = len(domains[i])
+                var = i
+        
+        if var is None or min_size == 0:
             return False
-
-        # gather MRV ties
-        var_domain_size = len(domains[var])
-        ties = []
-        for i, d in enumerate(domains):
-            if len(d) == var_domain_size and len(d) > 1:
-                ties.append(i)
-
-
-        if len(ties) > 1:
-            var = degree_tiebreak(ties, constraints)
-
-        # LCV
+        
         for value in lcv_order_values(var, domains, constraints):
-
-            removed_from_var = []
-            for x in domains[var]:
-                if x != value:
-                    removed_from_var.append(x)
-
+            if value not in domains[var]:
+                continue
+            
+            # Assign
+            assignment[var] = value
+            old_domain = domains[var]
             domains[var] = {value}
-
+            
+            # Forward check
             pruned = forward_check(var, value, domains, constraints)
+            
             if pruned is not None:
-                if backtrack():
+                if backtrack(depth + 1):
                     return True
-                undo_pruned(pruned)
-
-            domains[var].update(removed_from_var)
-
+                
+                # Undo forward checking
+                for other_var, removed_vals in pruned:
+                    domains[other_var].update(removed_vals)
+            
+            # Undo assignment
+            assignment[var] = None
+            domains[var] = old_domain
+        
         return False
-
-    if backtrack():
+    
+    if backtrack(0):
         return np.array(assignment, dtype=int)
-
     return None
-
 
 
 if __name__ == "__main__":

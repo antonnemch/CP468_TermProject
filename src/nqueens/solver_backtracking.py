@@ -68,12 +68,13 @@ def solve_backtracking(n, time_limit=None):
         if var is None:
             return False
 
-        # gather MRV ties correctly
+        # gather MRV ties
         var_domain_size = len(domains[var])
         ties = []
         for i, d in enumerate(domains):
-            if len(d) == var_domain_size:   # FIX: compare to global MRV var size
+            if len(d) == var_domain_size and len(d) > 1:
                 ties.append(i)
+
 
         if len(ties) > 1:
             var = degree_tiebreak(ties, constraints)

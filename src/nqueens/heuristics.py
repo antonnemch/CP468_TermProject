@@ -37,14 +37,15 @@ def degree_tiebreak(varss, constraints):
     for v in varss:
         deg = 0
         for u in varss:
-            if u != v and constraints(v,None, u, None):
-                degree += 1
+            if u != v:
+                deg += 1   # FIX: increment correct variable
 
-        if deg > best_deg:
+        if deg > best_degree:   # FIX: correct name
             best = v
-            best_deg =deg
+            best_degree = deg   # FIX: correct name
 
     return best
+
 
 def lcv_order_values(var, domains, constraints):
     """
@@ -91,4 +92,3 @@ def forward_check(var, value, domains, constraints):
                 return None
 
     return pruned
-

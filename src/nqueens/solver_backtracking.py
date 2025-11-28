@@ -40,77 +40,84 @@ def constraints(v1, r1, v2, r2):
       
     return True
 
-def solve_backtracking(n, time_limit = None):
-    """Return solution to N-queens as array or None if not solveable"""
-  
+def solve_backtracking(n, time_limit=None):
     start = time.time()
-    # Setup domains and assignments for each n
     domains = [set(range(n)) for _ in range(n)]
-    assignment = [None]*n 
+    assignment = [None] * n
 
-  # helper func to undo values in a specific variables domain that were previously pruned
-    def undo_pruned(pruned): 
-        for var, vals in pruned: 
+    def undo_pruned(pruned):
+        for var, vals in pruned:
             domains[var].update(vals)
-          
-    # core backtracking algorithm
+
     def backtrack():
-      
-      if time_limit and time.time() - start > time_limit:
-        return False
+        if time_limit and time.time() - start > time_limit:
+            return False
 
-      var = mrv_select_var(domains)
-      if var is None:
-        return False
-
-        # if all variables are assigned --> solved
+        # Check if solved (all domains size 1)
         if all(len(dom) == 1 for dom in domains):
-          
-          for i, dom in enumerate(domains):
-              assignment[i] =  next(iter(dom))
-          return True
+            for i, dom in enumerate(domains):
+                assignment[i] = next(iter(dom))
+            return True
 
-        # Get all vars tied for smallest domain size
-        min_size = float('inf')
-        for dom in domains:
-          size = len(dom)
-          if size < min_size:
-            min_size = size
+        # MRV
+        var = mrv_select_var(domains)
+        if var is None:
+            return False
 
+        # Degree tiebreak: gather ties
+        min_size = min(len(dom) for dom in domains)
         ties = []
-        for i,d in enumerate(domains):
-          if len(d) == min_size:
-            ties.append(i)
-           
+        for i, d in enumerate(domains):
+            if len(d) == min_size:
+                ties.append(i)
+
         if len(ties) > 1:
             var = degree_tiebreak(ties, constraints)
 
+        # LCV ordering
         for value in lcv_order_values(var, domains, constraints):
-          
-          removed = []
-          for x in domains[var]:
-            if x != value:
-              removed.append(x)
 
-          domains[var] = {value}
+            # save what we remove for undo
+            removed_from_var = []
+            for x in domains[var]:
+                if x != value:
+                    removed_from_var.append(x)
 
-          # forward checking
-          pruned = forward_check(var, value, domains, constraints)
-          if pruned is not None:
-            # check if solved
-            if backtrack():
-              return True
-              
-            # if not solved undo
-            undo_pruned(pruned)
+            # assign value
+            domains[var] = {value}
 
-          # undo any previous domain changes as well
-          domains[var].update(removed)
-          
+            pruned = forward_check(var, value, domains, constraints)
+            if pruned is not None:
+                if backtrack():
+                    return True
+
+                # undo forward check
+                undo_pruned(pruned)
+
+            # undo assignment
+            domains[var].update(removed_from_var)
+
         return False
 
     if backtrack():
-      # Explicitly convert to int type
-      return np.array(assignment,dtype=int)
-      
+        return np.array(assignment, dtype=int)
+
     return None
+
+
+
+if __name__ == "__main__":
+    import sys
+
+    # simple argument handling
+    n = 8
+    if len(sys.argv) > 1:
+        n = int(sys.argv[1])
+
+    sol = solve_backtracking(n)
+
+    if sol is None:
+        print("No solution found.")
+    else:
+        print("Solution:", sol)
+

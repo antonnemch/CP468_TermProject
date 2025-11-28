@@ -30,15 +30,14 @@ from .heuristics import (
 
 def constraints(v1, r1, v2, r2):
     """True if (v1=r1) and (v2=r2) is legal and false otherwise"""
-  
     if r1 is None or r2 is None:
-      return True
+        return True
     if r1 == r2:
-      return False
-    if abs(r1-r2) == abs(v1-v2):
-      return False
-      
+        return False
+    if abs(r1 - r2) == abs(v1 - v2):
+        return False
     return True
+
 
 def solve_backtracking(n, time_limit=None):
     start = time.time()
@@ -53,8 +52,13 @@ def solve_backtracking(n, time_limit=None):
         if time_limit and time.time() - start > time_limit:
             return False
 
-        # Check if solved (all domains size 1)
-        if all(len(dom) == 1 for dom in domains):
+        # Check if solved (every domain size == 1)
+        solved = True
+        for dom in domains:
+            if len(dom) != 1:
+                solved = False
+                break
+        if solved:
             for i, dom in enumerate(domains):
                 assignment[i] = next(iter(dom))
             return True
@@ -64,37 +68,32 @@ def solve_backtracking(n, time_limit=None):
         if var is None:
             return False
 
-        # Degree tiebreak: gather ties
-        min_size = min(len(dom) for dom in domains)
+        # gather MRV ties correctly
+        var_domain_size = len(domains[var])
         ties = []
         for i, d in enumerate(domains):
-            if len(d) == min_size:
+            if len(d) == var_domain_size:
                 ties.append(i)
 
         if len(ties) > 1:
             var = degree_tiebreak(ties, constraints)
 
-        # LCV ordering
+        # LCV
         for value in lcv_order_values(var, domains, constraints):
 
-            # save what we remove for undo
             removed_from_var = []
             for x in domains[var]:
                 if x != value:
                     removed_from_var.append(x)
 
-            # assign value
             domains[var] = {value}
 
             pruned = forward_check(var, value, domains, constraints)
             if pruned is not None:
                 if backtrack():
                     return True
-
-                # undo forward check
                 undo_pruned(pruned)
 
-            # undo assignment
             domains[var].update(removed_from_var)
 
         return False
@@ -108,16 +107,11 @@ def solve_backtracking(n, time_limit=None):
 
 if __name__ == "__main__":
     import sys
-
-    # simple argument handling
     n = 8
     if len(sys.argv) > 1:
         n = int(sys.argv[1])
-
     sol = solve_backtracking(n)
-
     if sol is None:
         print("No solution found.")
     else:
         print("Solution:", sol)
-

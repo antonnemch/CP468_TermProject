@@ -72,22 +72,17 @@ def forward_check(var, value, domains, constraints):
     Forward checking --> prune inconsistent values from neighbors and return a list of (neighbor, removed_values) for backtrack undo
     """
     pruned = []
-
-    for other_var, other_dom in enumerate(domains):
+    for other_var in range(len(domains)):
         if other_var == var:
             continue
-
         to_remove = []
-        for v2 in other_dom:
+        for v2 in list(domains[other_var]):
             if not constraints(var, value, other_var, v2):
                 to_remove.append(v2)
-
         if to_remove:
             for val in to_remove:
-                other_dom.discard(val)
-
+                domains[other_var].discard(val)
             pruned.append((other_var, to_remove))
             if not domains[other_var]:
                 return None
-
     return pruned

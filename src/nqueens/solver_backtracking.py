@@ -1,18 +1,14 @@
 """
 nqueens.solver_backtracking
 Purpose: Complete CSP solver baseline using MRV/LCV and Forward Checking.
-
 Function:
 - solve_backtracking(n: int, time_limit: float | None = None) -> np.ndarray | None
-
 Model:
 - Variables: columns; Domain: rows [0..n-1]
 - Constraints: unique rows; unique diagonals (r-c, r+c)
-
 Heuristics:
 - MRV (fewest legal values), Degree (most-constraining tie-break),
   LCV (least-constraining value), Forward Checking (prune downstream)
-
 Implementation notes:
 - Use bitmasks (ints) for rows and diagonals to prune quickly.
 - Iterative DFS optional to avoid recursion depth issues.
@@ -37,8 +33,7 @@ def constraints(v1, r1, v2, r2):
     if abs(r1 - r2) == abs(v1 - v2):
         return False
     return True
-
-
+  
 def solve_backtracking(n, time_limit=None):
     start = time.time()
     domains = [set(range(n)) for _ in range(n)]
@@ -66,9 +61,11 @@ def solve_backtracking(n, time_limit=None):
             if value not in domains[var]:
                 continue
             
+            # Save ALL domain states before forward check
+            saved_domains = [d.copy() for d in domains]
+            
             # Assign
             assignment[var] = value
-            old_domain = domains[var]
             domains[var] = {value}
             
             # Forward check
@@ -77,19 +74,19 @@ def solve_backtracking(n, time_limit=None):
             if pruned is not None:
                 if backtrack(depth + 1):
                     return True
-                
-                # Undo forward checking
-                for other_var, removed_vals in pruned:
-                    domains[other_var].update(removed_vals)
+            
+            # Restore ALL domains (whether pruned was None or not)
+            for i in range(len(domains)):
+                domains[i] = saved_domains[i]
             
             # Undo assignment
             assignment[var] = None
-            domains[var] = old_domain
         
         return False
     
     if backtrack(0):
         return np.array(assignment, dtype=int)
+      
     return None
 
 
@@ -103,4 +100,3 @@ if __name__ == "__main__":
         print("No solution found.")
     else:
         print("Solution:", sol)
-

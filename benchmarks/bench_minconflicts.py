@@ -449,14 +449,14 @@ def run_grid_search(grid_config: Dict[str, Any]) -> None:
 if __name__ == "__main__":
     # Hyperparameter grid configuration
     GRID_CONFIG: Dict[str, Any] = {
-        "n_values": [100, 1000, 10_000, 1_000_000],
-        "candidate_selectors": ["k_sample", "nbhd"],      # two modes
-        "candidate_counts": [32, 128, 512, 1024],         # used for both K-sampling and nbhd
+        "n_values": [10_000_000],  # problem sizes 100, 1000, 10_000, 1_000_000, 5_000_000
+        "candidate_selectors": ["k_sample"],      # two modes
+        "candidate_counts": [1024, 10240],         # used for both K-sampling and nbhd
         "structured_init_values": [0, 1],                 # 0=False, 1=True
-        "seeds": [42, 123, 67],                           # each seed = its own config
+        "seeds": [123],                           # each seed = its own config #42, 123, 67
         "max_restart": 3,
-        "max_step_ratio": 8,                           # max_steps = ratio * n
-        "timeout_per_config_sec": 15.0 * 60.0,            # wall-time budget per config (used for diagnostics)
+        "max_step_ratio": 20,                           # max_steps = ratio * n
+        "timeout_per_config_sec": 30 * 60.0,            # wall-time budget per config (used for diagnostics)
         "output_csv": "benchmarks/results/minconflicts_grid_improved.csv",
     }
 

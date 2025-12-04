@@ -3,7 +3,7 @@ nqueens.solver_minconflicts
 Purpose: High-performance Min-Conflicts solver for the N-Queens problem, with a Numba-accelerated inner loop.
 
 API:
-- solve_minconflicts(n, seed=42, max_steps=300000, k_sample=64, restart_limit=10, nbhd_width=0)
+- solve_minconflicts(n, seed, max_steps, k_sample, restart_limit, nbhd_width)
 
 Returns:
 - (pos, stats)
@@ -340,7 +340,7 @@ def solve_minconflicts(
 
 if __name__ == "__main__":
    # Quick sanity check for small/medium n
-   for n_test in (8, 20, 50, 100, 10000, 100000, 1000000):
+   for n_test in [8, 20, 50, 100, 10000, 100000, 1000000]:
       print(f"\nSolving n={n_test} with Min-Conflicts.")
       pos, stats = solve_minconflicts(
          n_test,

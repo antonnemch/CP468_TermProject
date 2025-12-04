@@ -1,0 +1,2 @@
+config_id,n,candidate_selector,candidate_count,structured_init,seed,k_sample,nbhd_width,max_restart,max_step_ratio,max_steps,time_limit_sec,solved,steps,restarts,total_time_sec,final_conflicts,stats_n,stats_solved,stats_steps,stats_restarts,stats_k_sample,stats_nbhd_width,stats_seed,stats_max_steps,timeout_hit,exception_occurred,exception_message
+0,1000000,k_sample,2048,0,124,2048,0,1,20.0,20000000,1800.0,1,676270,0,37.21875230001751,0,1000000,1,676270,0,2048,0,124,20000000,0,0,

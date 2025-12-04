@@ -451,8 +451,8 @@ if __name__ == "__main__":
     GRID_CONFIG: Dict[str, Any] = {
         "n_values": [10_000_000],  # problem sizes 100, 1000, 10_000, 1_000_000, 5_000_000
         "candidate_selectors": ["k_sample"],      # two modes
-        "candidate_counts": [1024, 10240],         # used for both K-sampling and nbhd
-        "structured_init_values": [0, 1],                 # 0=False, 1=True
+        "candidate_counts": [2048],         # used for both K-sampling and nbhd
+        "structured_init_values": [0],                 # 0=False, 1=True
         "seeds": [123],                           # each seed = its own config #42, 123, 67
         "max_restart": 3,
         "max_step_ratio": 20,                           # max_steps = ratio * n

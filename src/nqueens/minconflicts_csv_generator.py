@@ -80,7 +80,7 @@ def run_minconflicts_and_export_solution(
     if n <= 0:
         raise ValueError("n must be positive")
 
-    # --- 1. Allocate initial state and snapshot pos BEFORE any moves ---
+    # --- 1. allocate initial state and snapshot pos befoire any moves ---
     pos, row, diag1, diag2 = alloc_state(
         n,
         seed=seed,
@@ -92,7 +92,7 @@ def run_minconflicts_and_export_solution(
     restarts = 0
     solved = False
 
-    # --- 2. Restart loop: identical structure to solve_minconflicts ---
+    # --- 2. restart loop: identical structure to solve_minconflicts ---
     while restarts <= restart_limit:
         kernel_seed = seed + restarts
 
@@ -109,12 +109,12 @@ def run_minconflicts_and_export_solution(
         )
         total_steps += int(steps_used)
 
-        # Check for success
+        
         if solved_flag == 1 and is_valid_solution(pos):
             solved = True
             break
 
-        # Prepare next restart (if any)
+        
         restarts += 1
         if restarts <= restart_limit:
             pos, row, diag1, diag2 = alloc_state(
@@ -126,7 +126,7 @@ def run_minconflicts_and_export_solution(
     pos_final = pos.copy()
     is_valid = bool(is_valid_solution(pos_final))
 
-    # --- 3. Compute per-column metrics from initial and final pos ---
+    # --- 3. compute per-column metrics from initial and final pos ---
     n_val = int(n)
     c = np.arange(n_val, dtype=np.int64)
     row_initial = pos_init.astype(np.int64)
@@ -136,7 +136,7 @@ def run_minconflicts_and_export_solution(
     d1 = row_final - c
     d2 = row_final + c
 
-    # --- 4. Write CSV (one row per column) ---
+    # --- 4. write CSV (one row per column) ---
     fieldnames = [
         "n",
         "c",
@@ -163,7 +163,7 @@ def run_minconflicts_and_export_solution(
                 }
             )
 
-    # --- 5. Return stats dict for logging / sanity checks ---
+    # --- 5. return stats dict for logging / sanity checks ---
     stats: dict = {
         "n": n_val,
         "solved": bool(solved and is_valid),
@@ -178,7 +178,7 @@ def run_minconflicts_and_export_solution(
 
 
 
-# Example hyperparams: use your “optimal” k-sample config values here
+
 stats_50 = run_minconflicts_and_export_solution(
     n=10,
     out_csv=Path("benchmarks/results/solution_n10.csv"),

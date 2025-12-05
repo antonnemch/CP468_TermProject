@@ -43,7 +43,7 @@ def solve_backtracking(n, time_limit=None):
         if time_limit and time.time() - start > time_limit:
             return False
         
-        # Check if already complete
+        
         if depth == n:
             return True
         
@@ -61,25 +61,25 @@ def solve_backtracking(n, time_limit=None):
             if value not in domains[var]:
                 continue
             
-            # Save ALL domain states before forward check
+            
             saved_domains = [d.copy() for d in domains]
             
-            # Assign
+            
             assignment[var] = value
             domains[var] = {value}
             
-            # Forward check
+            
             pruned = forward_check(var, value, domains, constraints)
             
             if pruned is not None:
                 if backtrack(depth + 1):
                     return True
             
-            # Restore ALL domains (whether pruned was None or not)
+            
             for i in range(len(domains)):
                 domains[i] = saved_domains[i]
             
-            # Undo assignment
+            
             assignment[var] = None
         
         return False

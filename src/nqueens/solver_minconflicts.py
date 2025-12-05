@@ -23,19 +23,19 @@ Contributors:
 - Anton Nemchinski
 """
 
-# External Imports
+
 from typing import Dict, Tuple
 
 import numpy as np
 from numba import njit
 
-# Internal Imports
+
 from nqueens.common_arrays import alloc_state
 from nqueens.sampling import rng_randint, k_sample_rows, neighborhood_rows
 from nqueens.validation import rebuild_counters, is_valid_solution
 
 
-# Internal helper utilities (Numba-jitted)
+
 
 @njit(cache=True)
 def _column_conflicts(
@@ -88,7 +88,7 @@ def _conflicts_if_move(
         + int(diag1[r_i - c_i + base]) \
         + int(diag2[r_i + c_i])
 
-   # If we "move" to the same square, subtract this queen's own 3 counts
+  
    if r_i == current_r:
       cost -= 3
 
@@ -108,13 +108,13 @@ def _pick_conflicting_column(
    """
    Pick a column whose queen is currently in conflict, if any.
    """
-   # Try a few random probes first
+   
    for _ in range(8):
       c = int(rng_randint(rng_state, n))
       if _column_conflicts(c, pos, row, diag1, diag2, base) > 0:
          return c
 
-   # Deterministic full scan with stride 1, starting at a random column.
+   
    c0 = int(rng_randint(rng_state, n))
    c = c0
    for _ in range(n):
@@ -124,11 +124,11 @@ def _pick_conflicting_column(
       if c == n:
          c = 0
 
-   # No conflicts anywhere according to our counters
+   
    return -1
 
 
-# Internal Min-Conflicts kernel (Numba @njit) KEY FUNCTION
+
 
 @njit(cache=True, fastmath=True)
 def _minconflicts_kernel(
@@ -157,20 +157,20 @@ def _minconflicts_kernel(
    - solved_flag : int  (1 if solved, 0 otherwise)
    - steps_used  : int  (number of steps performed)
    """
-   base = n - 1  # Shift for diagonal indexing (prevents negative indices)
+   base = n - 1
 
-   # RNG state: single uint64 value in a 1-element array (Numba compatibility)
+   
    rng_state = np.empty(1, dtype=np.uint64)
-   rng_state[0] = np.uint64(seed) | np.uint64(1)  # ensure non-zero
+   rng_state[0] = np.uint64(seed) | np.uint64(1) 
 
-   # Candidate buffer for row choices
+   
    max_candidates = k_sample
    local_count = 0
    if nbhd_width > 0:
       local_count = 2 * nbhd_width + 1
    if local_count > max_candidates:
       max_candidates = local_count
-   if max_candidates < n:   # allow full-domain search if needed
+   if max_candidates < n:   
       max_candidates = n
    if max_candidates < 1:
       max_candidates = 1
@@ -178,10 +178,10 @@ def _minconflicts_kernel(
    candidates = np.empty(max_candidates, dtype=np.int32)
 
    for step in range(max_steps):
-      # Pick a conflicting column
+      
       c = _pick_conflicting_column(pos, row, diag1, diag2, n, base, rng_state)
       if c == -1:
-         # Defensive: double-check counters to avoid false positives
+         
          conflict_found = False
          for r_idx in range(n):
             if row[r_idx] > 1:
@@ -194,30 +194,30 @@ def _minconflicts_kernel(
                   break
 
          if not conflict_found:
-               # No conflicts anywhere, then solution is found
+               
                return 1, step
 
       current_r = int(pos[c])
 
-      # Build candidate row set
+     
       if nbhd_width > 0:
-         # Use local neighborhood around current row
+         
          k = neighborhood_rows(current_r, nbhd_width, n, candidates)
       else:
          if k_sample > 0 and k_sample < n:
-            # Use k-sampling of rows
+            
             k = k_sample_rows(n, k_sample, rng_state, candidates)
          else:
-            # Fall back to full domain search over all n rows
+            
             k = n
             for idx in range(n):
                candidates[idx] = idx
 
       if k <= 0:
-         # Should not happen
+         
          raise RuntimeError("No candidate rows generated")
 
-      # Choose best row among candidates, with random tie-breaking
+      
       best_r = int(candidates[0])
       best_cost = _conflicts_if_move(c, best_r, pos, row, diag1, diag2, base)
 
@@ -228,27 +228,27 @@ def _minconflicts_kernel(
             best_cost = cost
             best_r = r
          elif cost == best_cost:
-            # Randomly break ties to avoid cycles
+            
             if rng_randint(rng_state, 2) == 0:
                best_r = r
 
-      # Apply move (if it actually changes row) in O(1)
+     
       if best_r != current_r:
-         # Remove old queen
+         
          row[current_r] -= 1
          diag1[current_r - c + base] -= 1
          diag2[current_r + c] -= 1
 
-         # Place at new row
+      
          pos[c] = best_r
          row[best_r] += 1
          diag1[best_r - c + base] += 1
          diag2[best_r + c] += 1
-   # Not solved within budget
+   
    return 0, max_steps
 
 
-# Public API Python wrapper
+
 
 def solve_minconflicts(
    n: int,
@@ -288,13 +288,13 @@ def solve_minconflicts(
    restarts = 0
    solved = False
 
-   # Initial state (allocated as mutable numpy arrays for numba compatibility)
+   
    pos, row, diag1, diag2 = alloc_state(n, seed=seed, structured=structured_init)
 
    while restarts <= restart_limit:
       kernel_seed = seed + restarts
 
-      # Run Min-Conflicts kernel
+      
       solved_flag, steps_used = _minconflicts_kernel(
          pos,
          row,
@@ -312,14 +312,14 @@ def solve_minconflicts(
          solved = True
          break
 
-      # Restart if allowed: reinitialize board state
+      
       restarts += 1
       if restarts <= restart_limit:
          pos, row, diag1, diag2 = alloc_state(
              n, seed=seed + restarts, structured=structured_init
          )
 
-   # Final correctness validation (for stats only)
+   
    is_valid = bool(is_valid_solution(pos))
 
    stats: Dict[str, object] = {
@@ -335,18 +335,17 @@ def solve_minconflicts(
    return pos, stats
 
 
-# Minimal self-test (run this file directly)
+
 
 
 if __name__ == "__main__":
-   # Quick sanity check for small/medium n
    for n_test in [8, 20, 50, 100, 10000, 100000, 1000000]:
       print(f"\nSolving n={n_test} with Min-Conflicts.")
       pos, stats = solve_minconflicts(
          n_test,
          seed=123,
          max_steps=100000000,
-         k_sample=512,       # use k-sampling; set to 0 for full-domain
+         k_sample=512,       #
          restart_limit=5,
          nbhd_width=0,
          structured_init=True,
@@ -359,7 +358,7 @@ if __name__ == "__main__":
          assert np.all(d2_2 <= 1)
          print("  solution is valid.")
       else:
-         # For debugging, you can also print total conflicts:
+         
          from nqueens.validation import count_total_conflicts
          print("  solver did NOT find a solution within limits.")
          print("  remaining conflicts:", count_total_conflicts(pos))

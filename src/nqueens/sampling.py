@@ -29,7 +29,7 @@ from typing import Tuple
 import numpy as np
 from numba import njit
 
-# Internal Helper Functions
+#helpers
 
 @njit(cache=True)
 def rng_next(state: np.ndarray) -> np.uint64:
@@ -42,7 +42,7 @@ def rng_next(state: np.ndarray) -> np.uint64:
     Returns:
     value : np.uint64; Pseudorandom 64-bit integer.
     """
-    # Xorshift* algorithm for Pseudorandom Number Generation
+    
     x = state[0]
     x ^= (x << np.uint64(13)) & np.uint64(0xFFFFFFFFFFFFFFFF)
     x ^= (x >> np.uint64(7))
@@ -66,7 +66,7 @@ def rng_randint(state: np.ndarray, hi: int) -> int:
     return int(rng_next(state) % np.uint64(hi))
 
 
-# Outward-facing Functions (API)
+
 
 @njit(cache=True)
 def k_sample_rows(
@@ -136,7 +136,7 @@ def neighborhood_rows(
         if rr < 0:
             rr += n
             if rr < 0:
-                # in case width > n, wrap multiple times
+               
                 rr %= n
         elif rr >= n:
             rr -= n
@@ -159,16 +159,16 @@ def make_rng_state(seed: int) -> np.ndarray:
     Notes
     - Intended to be called from Python code, not from jitted code.
     """
-    # Mix the seed and force non-zero.
+    
     x = np.uint64(seed) | np.uint64(1)
     return np.array([x], dtype=np.uint64)
 
 
-# Short local testing
+
 
 if __name__ == "__main__":
 
-    # Test RNG and k_sample_rows
+    
     n = 10
     k = 5
     rng_state = make_rng_state(123)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     assert count == k, "k_sample_rows should fill exactly k entries when k <= len(out_rows)"
     assert np.all((out_rows[:count] >= 0) & (out_rows[:count] < n)), "rows must be in [0, n)"
 
-    # Test neighborhood_rows
+    
     center_row = 3
     width = 2
     nbhd_buffer = np.empty(2 * width + 1, dtype=np.int32)

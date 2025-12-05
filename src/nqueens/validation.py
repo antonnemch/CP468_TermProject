@@ -67,7 +67,7 @@ def count_total_conflicts(pos):
     row,diagonal1, diagonal2 = rebuild_counters(pos)
 
     def combination2(arr):
-        return int(np.sum(arr * (arr -1) // 2)) #Combination formula to count pairs (queens creating conflicts). arr is # of queens
+        return int(np.sum(arr * (arr -1) // 2)) #combination formula to count pairs (queens creating conflicts). arr is # of queens
     
     return combination2(row) + combination2(diagonal1) + combination2(diagonal2)
 

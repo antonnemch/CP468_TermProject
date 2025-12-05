@@ -44,15 +44,16 @@ def initialize_counters_from_positions(pos: np.ndarray) -> Tuple[np.ndarray, np.
     """
     n = int(pos.shape[0])
 
-    # Ensure int32 and C-contiguous for Numba
+    
     pos = np.ascontiguousarray(pos, dtype=np.int32)
 
-    # Allocate counters
+    
     row = np.zeros(n, dtype=np.int32)
     diag1 = np.zeros(2 * n - 1, dtype=np.int32)
+    
     diag2 = np.zeros(2 * n - 1, dtype=np.int32)
 
-    # Fill counters
+    
     base = n - 1
     for c in range(n):
         r = int(pos[c])
@@ -81,7 +82,7 @@ def _random_initial_position(n: int, rng: np.random.Generator) -> np.ndarray:
     Construct an initial placement with one queen per column and
     a random row in [0, n) for each column.
     """
-    # independent random row for each column
+    
     pos = rng.integers(low=0, high=n, size=n, dtype=np.int32)
     return pos
 
@@ -118,7 +119,7 @@ def alloc_state(
     rng = np.random.default_rng(seed)
 
     if structured:
-        # Simple way to vary the permutation slightly with the seed.
+        
         shift = seed % max(n, 1)
         pos = _structured_initial_position(n, shift=shift)
     else:
@@ -129,7 +130,7 @@ def alloc_state(
 
 
 if __name__ == "__main__":
-    # check
+    
     n = 8
     pos, row, d1, d2 = alloc_state(n, seed=1, structured=True)
     print("pos:", pos)
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     print("d1 :", d1)
     print("d2 :", d2)
 
-    # Rebuild counters from pos and compare
+    
     row2, d1_2, d2_2 = initialize_counters_from_positions(pos)
     assert np.array_equal(row, row2)
     assert np.array_equal(d1, d1_2)

@@ -31,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="N-Queens solver CLI (Min-Conflicts + Backtracking).",
     )
 
-    # ---- Required problem size ----
+    
     parser.add_argument(
         "-n",
         "--n",
@@ -40,7 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Board size (number of queens / columns).",
     )
 
-    # ---- Solver choice ----
+    
     parser.add_argument(
         "--solver",
         choices=["minconflicts", "backtracking"],
@@ -48,7 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Which solver to use.",
     )
 
-    # ---- Min-Conflicts options ----
+    
     parser.add_argument(
         "--seed",
         type=int,
@@ -88,7 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
              "for Min-Conflicts.",
     )
 
-    # ---- Backtracking options ----
+    
     parser.add_argument(
         "--time-limit",
         type=float,
@@ -96,7 +96,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Time limit in seconds for backtracking (None = no limit).",
     )
 
-    # ---- Meta options ----
+    
     parser.add_argument(
         "-r",
         "--runs",
@@ -123,7 +123,7 @@ def _run_minconflicts(config: AppConfig, run_idx: int) -> Dict[str, Any]:
     """
     Run a single Min-Conflicts solve with instrumentation and return a summary dict.
     """
-    # Adjust seed per run so repeated runs are not identical
+    
     seed = config.seed + run_idx
 
     params = {
@@ -152,13 +152,13 @@ def _run_minconflicts(config: AppConfig, run_idx: int) -> Dict[str, Any]:
     steps = int(stats.get("steps", 0))
     restarts = int(stats.get("restarts", 0))
 
-    # Extra validation if requested
+    
     if config.validate:
         valid = bool(is_valid_solution(pos))
     else:
         valid = solved
 
-    # Attach solver stats to params for richer summarize_run output
+    
     params.update(stats)
 
     summary = summarize_run(
@@ -169,7 +169,7 @@ def _run_minconflicts(config: AppConfig, run_idx: int) -> Dict[str, Any]:
         valid=valid,
     )
 
-    summary["pos"] = pos  # keep the solution array if caller wants it
+    summary["pos"] = pos  
     return summary
 
 
@@ -193,7 +193,7 @@ def _run_backtracking(config: AppConfig, run_idx: int) -> Dict[str, Any]:
     else:
         valid = solved
 
-    # Backtracking implementation does not currently track steps/restarts.
+    
     steps = None
     restarts = None
 
@@ -251,7 +251,7 @@ def main(argv: List[str] | None = None) -> int:
             print(shallow)
             print()
 
-    # ---- Aggregate + print high-level summary ----
+    
     solved_count = sum(1 for s in summaries if s.get("valid"))
     print(f"Ran {config.runs} run(s) for n={config.n} using solver='{config.solver}'.")
     print(f"Valid (solved) runs: {solved_count}/{config.runs}")
@@ -261,7 +261,7 @@ def main(argv: List[str] | None = None) -> int:
         avg_time = sum(times) / len(times)
         print(f"Average time over valid entries: {avg_time:.6f} s")
 
-    # For single-run, optionally show board + conflict count if unsolved
+    
     if config.runs == 1:
         summary = summaries[0]
         pos = summary.get("pos")
@@ -271,7 +271,7 @@ def main(argv: List[str] | None = None) -> int:
                 _pretty_print_board(pos)
 
             if not summary.get("valid", False):
-                # For debugging: show remaining conflicts if any
+                
                 conflicts = count_total_conflicts(pos)
                 print(f"\nWARNING: board is not valid; remaining conflicts = {conflicts}")
         else:

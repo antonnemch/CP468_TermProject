@@ -10,14 +10,14 @@ Functions:
 """
 
 def mrv_select_var(domains):
-    """Return the index of the variable with the smallest non-empty domain."""
+    """Return the index odf the variable with the smallest non-empty domain."""
     best = None
     best_size = float('inf')
 
     for i, dom in enumerate(domains):
         size = len(dom)
 
-        # no valid moves left
+       
         if size == 0:
             return None
         if size < best_size:
@@ -29,7 +29,7 @@ def mrv_select_var(domains):
 
 def degree_tiebreak(varss, constraints):
     """
-    For tied MRV vars pick the one with highest degree (most constraints).
+    For tied MRV vars pick the one with highest degree (most constsraints).
     """
     best = None
     best_degree = -1
@@ -38,48 +38,50 @@ def degree_tiebreak(varss, constraints):
         deg = 0
         for u in varss:
             if u != v:
-                deg += 1   # FIX: increment correct variable
+                deg += 1   
 
-        if deg > best_degree:   # FIX: correct name
+        if deg > best_degree:   
             best = v
-            best_degree = deg   # FIX: correct name
+            best_degree = deg   
 
     return best
 
 
 def lcv_order_values(var, domains, constraints):
     """
-    Order var's domain values by how many values they eliminate from neighbors.
+    Order var's domain values by how manyy values they eliminate from neighbors.
     """
     pairs = []  # (val, count of values eliminated)
     for value in domains[var]:
         count = 0
         for other_var in range(len(domains)):
             if other_var == var:
+
                 continue
-            for v2 in list(domains[other_var]):  # iterate over copy
+            for v2 in list(domains[other_var]):  # iterate oveer copy
                 if not constraints(var, value, other_var, v2):
+
                     count += 1
         pairs.append((value, count))
     
-    # Sort by fewest eliminations (least constraining first)
+    # Sort by fewest eliminationss
     pairs.sort(key=lambda p: p[1])
     return [val for val, _ in pairs]
 
 
 def forward_check(var, value, domains, constraints):
-    """
-    Forward checking --> prune inconsistent values from neighbors and return a list of (neighbor, removed_values) for backtrack undo
-    """
+    
     pruned = []
     for other_var in range(len(domains)):
         if other_var == var:
             continue
+
         to_remove = []
         for v2 in list(domains[other_var]):
             if not constraints(var, value, other_var, v2):
                 to_remove.append(v2)
         if to_remove:
+            
             for val in to_remove:
                 domains[other_var].discard(val)
             pruned.append((other_var, to_remove))
